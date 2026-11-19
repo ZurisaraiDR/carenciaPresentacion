@@ -6,6 +6,9 @@ La página se recorre con el scroll y cuenta el juego en cinco actos: tráiler, 
 
 Proyecto de **Integradora III · IDYGS101**, Ingeniería en Desarrollo y Gestión de Software, Universidad Tecnológica de Cancún.
 
+**Ver la presentación en línea:** https://zurisaraidr.github.io/carenciaPresentacion/
+Con todas las animaciones activas: https://zurisaraidr.github.io/carenciaPresentacion/?movimiento=1
+
 Demo del juego: https://ideny-lr.itch.io/carencia
 
 ---
