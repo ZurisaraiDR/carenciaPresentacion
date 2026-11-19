@@ -101,7 +101,7 @@ Primero haz clic en la escena. En pantallas táctiles se usan las teclas que apa
 
 ## Secuencia de la presentación
 
-1. **Tráiler de impacto:** el loop de cinemáticas de fondo y el tráiler con sonido.
+1. **Tráiler de impacto:** el loop de cinemáticas de fondo y el tráiler oficial con sonido.
 2. **Concepto y premisa:** el primer desayuno mientras Elaki abre los ojos, qué es el juego y por qué existe.
 3. **Personajes:** el expediente familiar y "Lo que acecha", con una linterna que sigue al puntero.
 4. **Gameplay:** un panel por nivel con su nombre, el miedo que representa y su video, y la demo jugable.
@@ -131,6 +131,19 @@ carenciaPresentacion/
 │   └── audio/              Música del menú y efectos
 └── tools/
     └── preparar_assets.py  Regenera los assets desde el proyecto de Unity
+```
+
+---
+
+## Cambiar el tráiler
+
+El tráiler oficial está en `assets/video/trailer.mp4`, con su portada en `assets/video/trailer.jpg`. Lo usan el botón "Ver tráiler" de la portada y la sección "Míralo antes de jugarlo".
+
+Para reemplazarlo, conviértelo a 1080p con un tope de bitrate. Así queda por debajo del límite de 100 MB por archivo de GitHub:
+
+```bash
+ffmpeg -i Carencia2Trailer.mp4 -map 0:v:0 -map 0:a:0 -vf scale=1920:-2 -c:v libx264 -crf 24 -maxrate 3.5M -bufsize 7M -preset slow -pix_fmt yuv420p -c:a aac -b:a 192k -write_tmcd 0 -movflags +faststart assets/video/trailer.mp4
+ffmpeg -ss 4.5 -i assets/video/trailer.mp4 -frames:v 1 -q:v 3 assets/video/trailer.jpg
 ```
 
 ---
@@ -172,7 +185,7 @@ Instala también ffmpeg desde https://ffmpeg.org/download.html y ejecuta:
 python tools/preparar_assets.py <ruta al repo de Unity de Carencia> <ruta al PDF de la integradora> <ruta a ffmpeg>
 ```
 
-El script copia y recorta los sprites, extrae las escenas del PDF y comprime las cinemáticas, el tráiler y el loop de la portada. El cartel de Margarita (`assets/img/cartel-margarita.png`) y los videos de gameplay no vienen del repo de Unity: se agregan a mano.
+El script copia y recorta los sprites, extrae las escenas del PDF y comprime las cinemáticas y el loop de la portada. El cartel de Margarita (`assets/img/cartel-margarita.png`), el tráiler oficial y los videos de gameplay no vienen del repo de Unity: se agregan a mano.
 
 ---
 

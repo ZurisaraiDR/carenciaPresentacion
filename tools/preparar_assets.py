@@ -17,7 +17,7 @@ import tempfile
 from pathlib import Path
 
 import pymupdf
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 
 SITIO = Path(__file__).resolve().parent.parent
 ASSETS = SITIO / "assets"
@@ -73,23 +73,6 @@ GUION_LOOP_PORTADA = [
     ("VID_N3_BanoFinal.mp4", 3, 5),
 ]
 
-# Guion del teaser: tarjetas de texto y fragmentos (archivo, inicio, duración).
-GUION_TEASER = [
-    ("texto", "Nadie recuerda que tuviste una…"),
-    ("video", ("VID_PRO_Despertar.mp4", 0, 4.2)),
-    ("texto", "«Hijo… tú nunca tuviste hermana»"),
-    ("video", ("VID_PRO_PortalEspejo.mp4", 2, 4)),
-    ("video", ("VID_PRO_Portal.mp4", 4, 4)),
-    ("texto", "Cada vez que cruzas, la casa se deforma"),
-    ("video", ("VID_N2_Monitor.mp4", 30, 6)),
-    ("video", ("VID_N3_ParedOjos.mp4", 0, 3)),
-    ("texto", "¿Encontrarás a Margarita… o la verdad?"),
-    ("video", ("VID_N3_BanoFinal.mp4", 3, 5)),
-    ("titulo", "CARENCIA"),
-]
-DURACION_TARJETA = 2.6
-SONIDO_TEASER = ("VID_N2_Monitor.mp4", 30)  # el audio del monitor acompaña su fragmento
-
 AUDIO = {
     "Audio/Musica/MUS_Menu.mp3": "musica-menu.mp3",
     "Audio/Efectos/SFX_DES_GlitchNombre.mp3": "glitch-nombre.mp3",
@@ -114,7 +97,6 @@ def main(repo: Path, pdf: Path, ffmpeg: str) -> None:
     exportar_frames_despertar(ffmpeg, videos / "VID_PRO_Despertar.mp4")
     for destino, (origen, inicio, duracion) in CINEMATICAS.items():
         exportar_bucle(ffmpeg, videos / origen, ASSETS / "video" / destino, inicio, duracion)
-    exportar_teaser(ffmpeg, videos, carencia / "Audio/Musica/MUS_Menu.mp3")
     exportar_loop_portada(ffmpeg, videos)
     print("Assets listos en", ASSETS)
 
@@ -192,23 +174,10 @@ def exportar_bucle(ffmpeg: str, video: Path, destino: Path, inicio: float, durac
              "-vf", f"scale={ANCHO}:-2", "-q:v", "4", destino.with_suffix(".jpg"))
 
 
-def exportar_teaser(ffmpeg: str, videos: Path, musica: Path) -> None:
-    """Une tarjetas y fragmentos, y les pone la música del menú más el audio del monitor."""
-    with tempfile.TemporaryDirectory() as temporal:
-        carpeta = Path(temporal)
-        segmentos = [crear_segmento(ffmpeg, carpeta, numero, tipo, contenido, videos)
-                     for numero, (tipo, contenido) in enumerate(GUION_TEASER)]
-        imagen = carpeta / "imagen.mp4"
-        unir_segmentos(ffmpeg, carpeta, segmentos, imagen)
-        mezclar_audio_teaser(ffmpeg, imagen, videos, musica)
-    ejecutar(ffmpeg, "-ss", 5, "-i", ASSETS / "video" / "teaser.mp4", "-frames:v", "1",
-             "-q:v", "4", ASSETS / "video" / "teaser.jpg")
-
-
 def exportar_loop_portada(ffmpeg: str, videos: Path) -> None:
     with tempfile.TemporaryDirectory() as temporal:
         carpeta = Path(temporal)
-        segmentos = [crear_segmento(ffmpeg, carpeta, numero, "video", fragmento, videos)
+        segmentos = [crear_segmento(ffmpeg, carpeta, numero, fragmento, videos)
                      for numero, fragmento in enumerate(GUION_LOOP_PORTADA)]
         unir_segmentos(ffmpeg, carpeta, segmentos, ASSETS / "video" / "portada.mp4")
     ejecutar(ffmpeg, "-ss", 1, "-i", ASSETS / "video" / "portada.mp4", "-frames:v", "1",
@@ -221,67 +190,14 @@ def unir_segmentos(ffmpeg: str, carpeta: Path, segmentos: list, destino: Path) -
     ejecutar(ffmpeg, "-f", "concat", "-safe", "0", "-i", lista, "-c", "copy", destino)
 
 
-def crear_segmento(ffmpeg, carpeta, numero, tipo, contenido, videos) -> Path:
+def crear_segmento(ffmpeg: str, carpeta: Path, numero: int, fragmento: tuple, videos: Path) -> Path:
+    origen, inicio, duracion = fragmento
     destino = carpeta / f"segmento-{numero:02d}.mp4"
-    if tipo == "video":
-        origen, inicio, duracion = contenido
-        entrada = ["-ss", inicio, "-t", duracion, "-i", videos / origen]
-    else:
-        duracion = DURACION_TARJETA + (1 if tipo == "titulo" else 0)
-        tarjeta = dibujar_tarjeta(carpeta / f"tarjeta-{numero:02d}.png", contenido, tipo == "titulo")
-        entrada = ["-loop", "1", "-t", duracion, "-i", tarjeta]
     fundidos = f"fade=t=in:st=0:d=0.3,fade=t=out:st={duracion - 0.3}:d=0.3"
-    ejecutar(ffmpeg, *entrada, "-vf", f"scale={ANCHO}:{ALTO},fps={FPS},setsar=1,{fundidos}",
+    ejecutar(ffmpeg, "-ss", inicio, "-t", duracion, "-i", videos / origen,
+             "-vf", f"scale={ANCHO}:{ALTO},fps={FPS},setsar=1,{fundidos}",
              "-an", *opciones_h264(), destino)
     return destino
-
-
-def dibujar_tarjeta(destino: Path, texto: str, es_titulo: bool) -> Path:
-    lienzo = Image.new("RGB", (ANCHO, ALTO), (8, 10, 14))
-    dibujo = ImageDraw.Draw(lienzo)
-    nombre_fuente = "Barrio-Regular.ttf" if es_titulo else "SpecialElite-Regular.ttf"
-    fuente = ImageFont.truetype(str(ASSETS / "fonts" / nombre_fuente), 150 if es_titulo else 40)
-    x, y = ANCHO / 2, ALTO / 2
-    if es_titulo:
-        dibujo.text((x + 9, y), texto, font=fuente, fill=(194, 26, 31), anchor="mm")
-        dibujo.text((x - 3, y), texto, font=fuente, fill=(95, 168, 200), anchor="mm")
-    dibujo.text((x, y), texto, font=fuente, fill=(236, 230, 216), anchor="mm")
-    lienzo.save(destino)
-    return destino
-
-
-def mezclar_audio_teaser(ffmpeg: str, imagen: Path, videos: Path, musica: Path) -> None:
-    duracion = duracion_del_guion()
-    origen, inicio = SONIDO_TEASER
-    retraso_ms = int(inicio_del_fragmento(origen) * 1000)
-    mezcla = (
-        f"[1:a]atrim=0:{duracion},volume=0.7,afade=t=out:st={duracion - 2}:d=2[musica];"
-        f"[2:a]atrim=0:6,volume=0.9,adelay={retraso_ms}|{retraso_ms}[monitor];"
-        "[musica][monitor]amix=inputs=2:duration=first:normalize=0[audio]"
-    )
-    ejecutar(ffmpeg, "-i", imagen, "-i", musica, "-ss", inicio, "-i", videos / origen,
-             "-filter_complex", mezcla, "-map", "0:v", "-map", "[audio]",
-             "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-shortest",
-             "-movflags", "+faststart", ASSETS / "video" / "teaser.mp4")
-
-
-def duracion_del_guion() -> float:
-    return sum(duracion_de(tipo, contenido) for tipo, contenido in GUION_TEASER)
-
-
-def inicio_del_fragmento(origen_buscado: str) -> float:
-    transcurrido = 0.0
-    for tipo, contenido in GUION_TEASER:
-        if tipo == "video" and contenido[0] == origen_buscado:
-            return transcurrido
-        transcurrido += duracion_de(tipo, contenido)
-    raise ValueError(f"{origen_buscado} no está en el guion del teaser")
-
-
-def duracion_de(tipo: str, contenido) -> float:
-    if tipo == "video":
-        return contenido[2]
-    return DURACION_TARJETA + (1 if tipo == "titulo" else 0)
 
 
 def opciones_h264() -> list:
