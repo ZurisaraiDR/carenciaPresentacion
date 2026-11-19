@@ -651,10 +651,19 @@ kbd {
   margin-top: clamp(3rem, 8vw, 6rem);
 }
 
+.recorrido__titulo {
+  color: var(--sangre);
+  font-weight: 400;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Los cinco objetivos específicos del documento, uno por columna */
 .recorrido__paradas {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--margen);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 2rem);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -665,14 +674,18 @@ kbd {
   align-content: start;
   gap: 0.6rem;
   color: var(--niebla);
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .parada__verbo {
+  margin: 0;
   font-family: var(--letra-titulo);
   font-weight: 400;
-  font-size: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+  font-size: clamp(1.4rem, 0.9rem + 1vw, 2.1rem);
   line-height: 1;
   color: var(--hueso);
+  text-wrap: balance;
 }
 
 .recorrido__piso {
@@ -1582,6 +1595,10 @@ html:not(.js) .cierre__aviso {
 @media (max-width: 1023px) {
   .barra__enlaces {
     display: none;
+  }
+
+  .recorrido__paradas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .expediente {

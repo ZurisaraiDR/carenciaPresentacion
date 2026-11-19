@@ -355,8 +355,10 @@ function animarRecorrido() {
   });
 
   caminata.to(elaki, { x: () => piso.clientWidth - elaki.clientWidth, duration: 1 }, 0);
+  /* Cada objetivo se enciende cuando Elaki llega a su columna, sin importar cuántos sean. */
+  const tramo = 0.9 / paradas.length;
   paradas.forEach((parada, posicion) => {
-    caminata.fromTo(parada, { opacity: 0.15, y: 20 }, { opacity: 1, y: 0, duration: 0.1 }, 0.05 + posicion * 0.33);
+    caminata.fromTo(parada, { opacity: 0.15, y: 20 }, { opacity: 1, y: 0, duration: tramo * 0.5 }, 0.05 + posicion * tramo);
   });
 }
 
