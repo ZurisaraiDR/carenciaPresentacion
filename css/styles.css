@@ -1036,9 +1036,9 @@ kbd {
     "encabezado encabezado"
     "video texto";
   align-content: center;
-  gap: clamp(1.5rem, 3vw, 2.5rem) clamp(2rem, 4vw, 4rem);
+  gap: clamp(1rem, 3vh, 2.5rem) clamp(2rem, 4vw, 4rem);
   min-height: 100dvh;
-  padding: 5.5rem var(--margen) 3rem;
+  padding: clamp(4.5rem, 10vh, 6rem) var(--margen) clamp(1.5rem, 4vh, 3rem);
 }
 
 .nivel--intro {
@@ -1073,7 +1073,7 @@ kbd {
 .nivel__titulo {
   font-family: var(--letra-titulo);
   font-weight: 400;
-  font-size: clamp(3.25rem, 1.5rem + 5.6vw, 8rem);
+  font-size: min(clamp(3.25rem, 1.5rem + 5.6vw, 8rem), 13vh); /* también limitado por la altura */
   line-height: 0.9;
   white-space: nowrap;
 }
@@ -1082,6 +1082,8 @@ kbd {
 .gameplay-video {
   grid-area: video;
   position: relative;
+  /* Ancho máximo según la altura libre de la pantalla, para que título y video quepan juntos */
+  width: min(100%, calc((100dvh - 19rem) * 16 / 9));
   aspect-ratio: 16 / 9;
   background: var(--oscuridad);
   box-shadow: 0 30px 70px rgb(0 0 0 / 0.45);
