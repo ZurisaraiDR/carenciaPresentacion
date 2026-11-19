@@ -1,0 +1,1717 @@
+/* =============================================================
+   CARENCIA · sitio promocional
+   Tokens tomados del Art Design Document (Imagen 13, paleta de la
+   interfaz) y del menú principal diseñado en Figma.
+   ============================================================= */
+
+@font-face {
+  font-family: "Barrio";
+  src: url("../assets/fonts/Barrio-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Special Elite";
+  src: url("../assets/fonts/SpecialElite-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  /* Paleta oficial */
+  --fondo-base: #080a0e;
+  --noche: #0a1018;
+  --hueso: #ece6d8;
+  --niebla: #8a9ba8;
+  --sangre: #c21a1f;
+  --sangre-oscura: #b3141b;
+  --reflejo: #5fa8c8;            /* solo en el glitch del título, como en el juego */
+  --tinta: #1b1b1e;
+  --tinta-suave: #3a3a3e;
+  --papel: #c9c1ae;
+  --oscuridad: #05070a;
+
+  /* Fondos de cada dimensión (la casa se oscurece y se ensucia) */
+  --casa-real: #1a130e;
+  --casa-liminal: #dcdad2;
+  --casa-abandonada: #07090b;
+  --casa-carne: #1f0507;
+
+  /* Tipografía: Barrio para títulos, Special Elite para todo lo demás */
+  --letra-titulo: "Barrio", "Special Elite", system-ui, sans-serif;
+  --letra-texto: "Special Elite", "Courier New", monospace;
+  --texto-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --texto-grande: clamp(1.2rem, 1rem + 0.8vw, 1.6rem);
+  --titulo-seccion: clamp(2.75rem, 1.6rem + 4.5vw, 5.5rem);
+
+  /* Espaciado: mucho aire entre ideas */
+  --margen: clamp(1.25rem, 5vw, 5rem);
+  --hueco-seccion: clamp(7rem, 14vw, 12rem);
+  --ancho-maximo: 1240px;
+
+  /* Movimiento */
+  --salida-suave: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Capas (única escala de z-index del sitio) */
+  --capa-barra: 50;
+  --capa-grano: 80;
+
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 84px; /* la barra fija no tapa anclas ni el elemento enfocado */
+}
+
+body {
+  margin: 0;
+  background: var(--fondo-base);
+  color: var(--hueso);
+  font-family: var(--letra-texto);
+  font-size: var(--texto-base);
+  line-height: 1.65;
+  overflow-x: clip;
+}
+
+/* Grano de película y viñeta: capas fijas que no repintan al hacer scroll */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--capa-grano);
+}
+
+body::before {
+  background: radial-gradient(ellipse at center, transparent 55%, rgb(10 16 24 / 0.55) 100%);
+}
+
+body::after {
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+img,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+a,
+button,
+summary {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgb(194 26 31 / 0.25);
+}
+
+:focus-visible {
+  outline: 2px solid var(--hueso);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--sangre);
+  color: var(--hueso);
+}
+
+.saltar {
+  position: absolute;
+  left: var(--margen);
+  top: -100px;
+  z-index: calc(var(--capa-barra) + 1);
+  padding: 0.75rem 1rem;
+  background: var(--hueso);
+  color: var(--tinta);
+}
+
+.saltar:focus {
+  top: 1rem;
+}
+
+kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.9em;
+  height: 1.9em;
+  margin: 0 0.12em;
+  padding: 0 0.35em;
+  border: 2px solid currentColor;
+  border-bottom-width: 4px;
+  font-family: var(--letra-texto);
+  font-size: 0.85em;
+  line-height: 1;
+  vertical-align: 0.1em;
+}
+
+/* ---------- Piezas compartidas ---------- */
+
+.titulo-seccion {
+  font-family: var(--letra-titulo);
+  font-weight: 400;
+  font-size: var(--titulo-seccion);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.parrafo {
+  max-width: 52ch;
+  color: var(--niebla);
+  font-size: var(--texto-grande);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1.25rem;
+  border: 1px solid transparent;
+  font: inherit;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s var(--salida-suave), background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.boton:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.boton--sangre {
+  background: var(--sangre);
+  color: var(--hueso);
+}
+
+.boton--sangre:hover {
+  background: var(--sangre-oscura);
+}
+
+.boton--linea {
+  background: transparent;
+  border-color: rgb(236 230 216 / 0.45);
+  color: var(--hueso);
+}
+
+.boton--linea:hover {
+  border-color: var(--hueso);
+  background: var(--hueso);
+  color: var(--tinta);
+}
+
+.boton--grande {
+  min-height: 56px;
+  padding: 0.9rem 2rem;
+  font-size: 1.2rem;
+}
+
+/* Sprite animado: una tira horizontal de frames del mismo ancho dentro de una ventana.
+   La tira mide N veces la ventana; translateX(-100%) con steps(N) recorre cada frame. */
+.sprite {
+  overflow: hidden;
+  aspect-ratio: var(--proporcion, 1);
+}
+
+.sprite img {
+  width: auto;
+  max-width: none;
+  height: 100%;
+  image-rendering: pixelated;
+  animation: tira-de-frames var(--duracion, 1s) steps(var(--frames)) infinite;
+}
+
+@keyframes tira-de-frames {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Opción de menú del juego: gris niebla y un rasguño rojo al enfocarse */
+.menu-juego__opcion,
+.pestana {
+  position: relative;
+  display: inline-block;
+  padding: 0.2rem 0 0.2rem 1.6rem;
+  border: 0;
+  background: none;
+  color: var(--niebla);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.35s var(--salida-suave);
+}
+
+.menu-juego__opcion::before,
+.pestana::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.45rem;
+  height: 1.5em;
+  translate: 0 -50%;
+  background: url("../assets/img/rasguno.png") center / contain no-repeat;
+  image-rendering: pixelated;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.menu-juego__opcion:hover,
+.menu-juego__opcion:focus-visible,
+.pestana:hover,
+.pestana:focus-visible,
+.pestana[aria-selected="true"] {
+  color: var(--hueso);
+  transform: translateX(0.35rem);
+}
+
+.menu-juego__opcion:hover::before,
+.menu-juego__opcion:focus-visible::before,
+.pestana:hover::before,
+.pestana[aria-selected="true"]::before {
+  opacity: 1;
+}
+
+/* ---------- Barra superior ---------- */
+
+.barra {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--capa-barra);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 72px;
+  padding: 0 max(var(--margen), env(safe-area-inset-right)) 0 max(var(--margen), env(safe-area-inset-left));
+  background: linear-gradient(to bottom, rgb(8 10 14 / 0.85), rgb(8 10 14 / 0));
+  transition: transform 0.4s var(--salida-suave);
+}
+
+.barra--oculta {
+  transform: translateY(-100%);
+}
+
+.barra__marca {
+  font-family: var(--letra-titulo);
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.barra__enlaces {
+  display: flex;
+  gap: 2.25rem;
+}
+
+.barra__enlaces a {
+  color: var(--niebla);
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.barra__enlaces a:hover {
+  color: var(--hueso);
+}
+
+.barra__acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sonido {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border: 0;
+  background: none;
+  color: var(--niebla);
+  font: inherit;
+  font-size: 0.8rem;
+  opacity: 0.55;
+  cursor: pointer;
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.sonido:hover,
+.sonido:focus-visible,
+.sonido[aria-pressed="true"] {
+  color: var(--hueso);
+  opacity: 1;
+}
+
+/* Solo las barras: el nombre accesible lo da aria-label="Sonido" */
+.sonido__texto {
+  display: none;
+}
+
+.sonido__barras {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.sonido__barras i {
+  width: 3px;
+  height: 14px;
+  background: currentColor;
+  transform: scaleY(0.25);
+  transform-origin: bottom;
+  transition: transform 0.3s;
+}
+
+.sonido[aria-pressed="true"] .sonido__barras i {
+  animation: ecualizador 0.9s ease-in-out infinite alternate;
+}
+
+.sonido[aria-pressed="true"] .sonido__barras i:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.sonido[aria-pressed="true"] .sonido__barras i:nth-child(3) {
+  animation-delay: -0.6s;
+}
+
+@keyframes ecualizador {
+  from { transform: scaleY(0.2); }
+  to { transform: scaleY(1); }
+}
+
+/* ---------- Acto 1 · Portada con el tráiler de fondo ---------- */
+
+.portada {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: 100dvh;
+  padding: 7rem var(--margen) clamp(3rem, 8vh, 6rem);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.portada__video {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.portada__video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.5) brightness(1.05);
+}
+
+/* Duotono rojo, como un póster de cine de terror (z-index: encima del video, no detrás) */
+.portada__video::before,
+.portada__video::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.portada__video::before {
+  background: var(--sangre);
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+}
+
+.portada__video::after {
+  background:
+    linear-gradient(to top, var(--fondo-base) 0%, rgb(8 10 14 / 0.15) 45%, rgb(8 10 14 / 0.45) 100%),
+    linear-gradient(90deg, rgb(8 10 14 / 0.6) 0%, transparent 55%);
+}
+
+.portada__contenido {
+  display: grid;
+  justify-items: start;
+  gap: 1.5rem;
+}
+
+/* Título con tres copias desfasadas (roja, azul y hueso), igual que TituloGlitch.cs */
+.titulo-glitch {
+  position: relative;
+  font-family: var(--letra-titulo);
+  font-weight: 400;
+  font-size: clamp(4.5rem, 2rem + 11vw, 13rem);
+  line-height: 0.85;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.titulo-glitch__capa {
+  position: absolute;
+  inset: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.titulo-glitch__capa--roja {
+  left: 0.06em;
+  color: var(--sangre);
+}
+
+.titulo-glitch__capa--azul {
+  color: var(--reflejo);
+  opacity: 0.55;
+}
+
+.titulo-glitch__texto {
+  position: relative;
+  color: var(--hueso);
+}
+
+.titulo-glitch__falla {
+  color: var(--tinta-suave);
+}
+
+.portada__lema {
+  font-size: clamp(1.25rem, 1rem + 1.2vw, 2rem);
+}
+
+.menu-juego {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-juego__opcion {
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2.1rem);
+}
+
+.menu-juego li:first-child .menu-juego__opcion {
+  color: var(--hueso);
+}
+
+.menu-juego li:first-child .menu-juego__opcion::before {
+  opacity: 1;
+}
+
+/* Tráiler en pantalla completa (dialog nativo: Esc cierra y el foco vuelve al botón) */
+.cine {
+  width: min(1100px, 94vw);
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--hueso);
+  overscroll-behavior: contain;
+}
+
+.cine::backdrop {
+  background: rgb(5 7 10 / 0.94);
+}
+
+.cine__marco {
+  display: grid;
+  gap: 1rem;
+}
+
+.cine__marco video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--oscuridad);
+}
+
+.cine__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--niebla);
+  font-size: 0.9rem;
+}
+
+/* ---------- Acto 2 · Imagina ---------- */
+
+.imagina {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 100dvh;
+  padding: 6rem var(--margen);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.imagina__lienzo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+}
+
+.imagina__velo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgb(8 10 14 / 0.92) 0%, rgb(8 10 14 / 0.65) 55%, rgb(8 10 14 / 0.35) 100%);
+}
+
+/* Destello rojo cuando la madre niega a Margarita (solo se anima su opacidad) */
+.imagina__destello {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--sangre);
+  opacity: 0;
+  mix-blend-mode: multiply;
+}
+
+.imagina__lineas {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 38ch;
+}
+
+.linea {
+  font-size: clamp(1.5rem, 1rem + 2.2vw, 3rem);
+  line-height: 1.25;
+}
+
+.linea--grande {
+  font-family: var(--letra-titulo);
+  font-size: clamp(2.25rem, 1.2rem + 4.5vw, 5.5rem);
+  line-height: 1;
+}
+
+.linea--sangre {
+  color: var(--sangre);
+}
+
+.nombre-corrupto {
+  display: inline-block;
+  text-decoration: underline wavy var(--sangre) 2px;
+  text-underline-offset: 0.2em;
+}
+
+/* Con JavaScript, las líneas se apilan en el mismo lugar y aparecen una tras otra */
+.js .imagina__lineas {
+  grid-template-areas: "linea";
+}
+
+.js .linea {
+  grid-area: linea;
+  align-self: center;
+  opacity: 0;
+}
+
+/* ---------- Acto 2 · Concepto ---------- */
+
+.concepto {
+  display: grid;
+  gap: 1.75rem;
+  max-width: var(--ancho-maximo);
+  margin-inline: auto;
+  padding: var(--hueco-seccion) var(--margen);
+}
+
+.recorrido {
+  display: grid;
+  gap: 2rem;
+  margin-top: clamp(3rem, 8vw, 6rem);
+}
+
+.recorrido__paradas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--margen);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.parada {
+  display: grid;
+  align-content: start;
+  gap: 0.6rem;
+  color: var(--niebla);
+}
+
+.parada__verbo {
+  font-family: var(--letra-titulo);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+  line-height: 1;
+  color: var(--hueso);
+}
+
+.recorrido__piso {
+  position: relative;
+  height: clamp(140px, 17vw, 210px);
+  border-bottom: 1px dashed var(--tinta-suave);
+}
+
+.sprite--caminante {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+}
+
+/* El sprite camina solo mientras el usuario hace scroll */
+.js .sprite--caminante img {
+  animation-play-state: paused;
+}
+
+.sprite--caminante.esta-caminando img {
+  animation-play-state: running;
+}
+
+.sprite--caminante.mira-izquierda {
+  transform: scaleX(-1);
+}
+
+/* ---------- Acto 2 · Muro de carteles ---------- */
+
+.muro {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 6rem var(--margen);
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+
+.muro__carteles {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.muro__cartel {
+  position: absolute;
+  width: clamp(64px, calc(var(--ancho) * 1vw), 220px);
+  height: auto;
+  rotate: var(--giro);
+  image-rendering: pixelated;
+  filter: grayscale(0.7) brightness(0.5);
+  box-shadow: 0 12px 24px rgb(0 0 0 / 0.5);
+}
+
+.muro__cartel--margarita {
+  filter: none;
+  z-index: 1;
+}
+
+.muro__centro {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+}
+
+/* Velo detrás de la cifra para que se lea sobre los carteles */
+.muro__centro::before {
+  content: "";
+  position: absolute;
+  inset: -5rem -8rem;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, rgb(8 10 14 / 0.95) 40%, rgb(8 10 14 / 0) 72%);
+}
+
+.cifra__numero {
+  font-family: var(--letra-titulo);
+  font-size: clamp(4.5rem, 2rem + 10vw, 11rem);
+  line-height: 0.9;
+  color: var(--sangre);
+  font-variant-numeric: tabular-nums;
+}
+
+.cifra__numero::before {
+  content: "+";
+}
+
+.muro__titulo {
+  font-weight: 400;
+  font-size: clamp(1.3rem, 1rem + 1.2vw, 2rem);
+  line-height: 1.3;
+}
+
+.muro__remate {
+  margin-top: 1rem;
+  font-family: var(--letra-titulo);
+  font-size: clamp(1.8rem, 1.2rem + 2vw, 3rem);
+  line-height: 1;
+}
+
+.muro .fuente {
+  position: absolute;
+  bottom: 1.5rem;
+  color: var(--niebla);
+  font-size: 0.8rem;
+}
+
+/* ---------- Acto 3 · Una casa que olvida (expediente) ---------- */
+
+.familia,
+.acecha,
+.pruebalo {
+  min-height: 100dvh;
+  align-content: center;
+  display: grid;
+  gap: clamp(1.75rem, 4vh, 3rem);
+  max-width: var(--ancho-maximo);
+  margin-inline: auto;
+  padding: clamp(5rem, 10vh, 7rem) var(--margen) clamp(2rem, 5vh, 4rem); /* cada una cabe en una pantalla, como diapositiva */
+}
+
+.familia__encabezado,
+.acecha__encabezado,
+.pruebalo__encabezado {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.expediente {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.35fr) 1fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
+}
+
+.expediente__pestanas {
+  display: grid;
+  gap: 0.75rem;
+  align-content: center;
+}
+
+.pestana {
+  font-family: var(--letra-titulo);
+  font-size: clamp(1.75rem, 1.2rem + 1.5vw, 2.75rem);
+  line-height: 1.1;
+  min-height: 44px;
+}
+
+.ficha {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+  min-height: 0;
+}
+
+.ficha[hidden] {
+  display: none;
+}
+
+/* Escenario del personaje: un foco de luz sobre el piso */
+.ficha__escena {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  height: min(520px, 58vh);
+}
+
+.ficha__escena::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 45% 70% at 50% 40%, rgb(236 230 216 / 0.08), transparent 70%);
+}
+
+.ficha__escena::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  width: 55%;
+  height: 26px;
+  translate: -50% 0;
+  background: radial-gradient(ellipse at center, rgb(0 0 0 / 0.65), transparent 70%);
+}
+
+.ficha__sprite {
+  position: relative;
+  z-index: 1;
+  height: min(470px, 53vh);
+}
+
+.ficha__sprite--elaki {
+  height: min(500px, 56vh);
+}
+
+.ficha__cartel {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  width: min(100%, 300px);
+  height: auto;
+  image-rendering: pixelated;
+  transform: rotate(-3deg);
+  filter: drop-shadow(0 24px 30px rgb(0 0 0 / 0.6));
+}
+
+.ficha__texto {
+  display: grid;
+  gap: 1rem;
+}
+
+.ficha__dato {
+  color: var(--sangre);
+  font-size: 0.95rem;
+}
+
+.ficha__nombre {
+  font-family: var(--letra-titulo);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 1.5rem + 2vw, 3.5rem);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.ficha__texto > p:not(.ficha__dato) {
+  max-width: 40ch;
+  color: var(--niebla);
+}
+
+.ficha__cita {
+  margin-top: 0.5rem;
+  font-size: var(--texto-grande);
+  line-height: 1.4;
+}
+
+/* ---------- Acto 3 · Lo que acecha (linterna) ---------- */
+
+.oscuridad {
+  --x: 50%;
+  --y: 45%;
+  --radio: clamp(180px, 22vw, 300px);
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--margen);
+  padding: 0 var(--margen);
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.entidad {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.entidad__sprite {
+  height: clamp(240px, 40vh, 440px);
+}
+
+.entidad figcaption {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 0.25rem;
+  color: var(--niebla);
+  text-align: center;
+}
+
+.entidad figcaption strong {
+  font-family: var(--letra-titulo);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2.1rem);
+  color: var(--hueso);
+}
+
+/* Todo está a oscuras salvo un círculo de luz que sigue al puntero */
+.oscuridad__velo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(circle var(--radio) at var(--x) var(--y), transparent 0%, rgb(5 7 10 / 0.55) 55%, var(--oscuridad) 100%);
+  pointer-events: none;
+  transition: opacity 0.6s;
+}
+
+.oscuridad.esta-iluminada .oscuridad__velo {
+  opacity: 0;
+}
+
+.acecha {
+  gap: 2rem;
+}
+
+.acecha__encabezado {
+  grid-template-columns: 1fr auto;
+  align-items: end;
+}
+
+.acecha__titulos {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* Botón discreto: texto pequeño subrayado, sin caja */
+.acecha__luz {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--niebla);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.3em;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.acecha__luz:hover,
+.acecha__luz:focus-visible {
+  color: var(--hueso);
+  opacity: 1;
+}
+
+/* ---------- Acto 4 · Gameplay (recorrido horizontal) ---------- */
+
+.gameplay {
+  overflow: hidden;
+}
+
+.gameplay__pista {
+  display: flex;
+  width: max-content;
+}
+
+/* El nombre del nivel manda: arriba y enorme; debajo, el gameplay y su significado */
+.nivel {
+  flex: 0 0 100vw;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-areas:
+    "encabezado encabezado"
+    "video texto";
+  align-content: center;
+  gap: clamp(1.5rem, 3vw, 2.5rem) clamp(2rem, 4vw, 4rem);
+  min-height: 100dvh;
+  padding: 5.5rem var(--margen) 3rem;
+}
+
+.nivel--intro {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: none;
+  gap: 1.5rem;
+  background: var(--fondo-base);
+}
+
+.nivel--prologo { background: linear-gradient(90deg, var(--fondo-base), var(--casa-real) 25%); }
+.nivel--uno { background: linear-gradient(90deg, var(--casa-real), var(--casa-liminal) 25%); color: var(--tinta); }
+.nivel--dos { background: linear-gradient(90deg, var(--casa-liminal), var(--casa-abandonada) 25%); }
+.nivel--tres { background: linear-gradient(90deg, var(--casa-abandonada), var(--casa-carne) 25%); }
+
+.nivel__encabezado {
+  grid-area: encabezado;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.nivel__numero {
+  color: var(--sangre);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nivel--uno .nivel__numero {
+  color: var(--sangre-oscura);
+}
+
+.nivel__titulo {
+  font-family: var(--letra-titulo);
+  font-weight: 400;
+  font-size: clamp(3.25rem, 1.5rem + 5.6vw, 8rem);
+  line-height: 0.9;
+  white-space: nowrap;
+}
+
+/* Ventana del gameplay: sin video todavía, muestra la captura en duotono y un aviso */
+.gameplay-video {
+  grid-area: video;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--oscuridad);
+  box-shadow: 0 30px 70px rgb(0 0 0 / 0.45);
+}
+
+.gameplay-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.gameplay-video.sin-video video {
+  filter: grayscale(1) contrast(1.15) brightness(0.75);
+}
+
+.gameplay-video.sin-video::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--sangre);
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+}
+
+.gameplay-video.sin-video::after {
+  content: "Gameplay muy pronto";
+  position: absolute;
+  z-index: 2;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  padding: 0.4rem 0.8rem;
+  background: rgb(8 10 14 / 0.8);
+  color: var(--hueso);
+  font-size: 0.9rem;
+}
+
+.nivel__texto {
+  grid-area: texto;
+  align-self: center;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.nivel__miedo {
+  font-family: var(--letra-titulo);
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem);
+  line-height: 1;
+}
+
+.nivel__miedo span,
+.nivel__sentir span {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-family: var(--letra-texto);
+  color: var(--sangre);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nivel--uno .nivel__miedo span,
+.nivel--uno .nivel__sentir span {
+  color: var(--sangre-oscura);
+}
+
+.nivel__significado {
+  max-width: 28ch;
+  font-size: var(--texto-grande);
+  line-height: 1.45;
+}
+
+.nivel__sentir {
+  color: var(--niebla);
+}
+
+.nivel--uno .nivel__sentir {
+  color: var(--tinta-suave);
+}
+
+
+
+/* ---------- Acto 4 · Abre el espejo (demo jugable) ---------- */
+
+.pruebalo__juego {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.escenario {
+  --x: 640;
+  --y: 520;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1024 / 644;
+  overflow: hidden;
+  background: var(--oscuridad);
+  cursor: pointer;
+  outline-offset: 6px;
+}
+
+.escenario__fondo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* El cristal del espejo, en coordenadas de la imagen original (1024 × 644) */
+.escenario__espejo {
+  position: absolute;
+  left: calc(868 / 1024 * 100%);
+  top: calc(170 / 644 * 100%);
+  width: calc(62 / 1024 * 100%);
+  height: calc(122 / 644 * 100%);
+  overflow: hidden;
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.escenario__espejo video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Elaki mide unas 1.7 veces el inodoro, como en el juego; el ancla es la base de sus pies */
+.jugador {
+  position: absolute;
+  left: calc(var(--x) / 1024 * 100%);
+  top: calc(var(--y) / 644 * 100%);
+  height: 48%;
+  translate: -50% -97%;
+  pointer-events: none;
+}
+
+.jugador__sprite {
+  height: 100%;
+}
+
+.escenario__indicador {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 2px solid var(--tinta);
+  background: var(--hueso);
+  color: var(--tinta);
+  font-size: 1.1rem;
+  translate: -50% -50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dialogo {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 4%;
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.9rem 1.2rem;
+  background: rgb(8 10 14 / 0.86);
+  border: 1px solid rgb(236 230 216 / 0.15);
+}
+
+.dialogo[hidden] {
+  display: none;
+}
+
+.dialogo__nombre {
+  color: var(--papel);
+  font-size: 0.85rem;
+}
+
+.dialogo__texto {
+  min-height: 1.6em;
+  font-style: italic;
+  font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.25rem);
+}
+
+.escenario__invitacion {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(8 10 14 / 0.55);
+  font-size: var(--texto-grande);
+  transition: opacity 0.3s;
+}
+
+.escenario:focus-within .escenario__invitacion,
+.escenario.esta-activo .escenario__invitacion {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Mando en pantalla: se ilumina con el teclado y también funciona con clic o toque */
+.mando {
+  display: grid;
+  gap: 2rem;
+  justify-items: start;
+}
+
+.mando__grupo {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+}
+
+.mando__cruz {
+  display: grid;
+  grid-template-columns: repeat(3, 3.4rem);
+  grid-template-areas:
+    ". w ."
+    "a s d";
+  gap: 0.45rem;
+}
+
+.mando__cruz [data-tecla="w"] { grid-area: w; }
+.mando__cruz [data-tecla="a"] { grid-area: a; }
+.mando__cruz [data-tecla="s"] { grid-area: s; }
+.mando__cruz [data-tecla="d"] { grid-area: d; }
+
+.tecla {
+  width: 3.4rem;
+  height: 3.4rem;
+  border: 2px solid var(--hueso);
+  background: var(--noche);
+  color: var(--hueso);
+  font: inherit;
+  font-size: 1.3rem;
+  box-shadow: 0 5px 0 var(--hueso);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  transition: transform 0.08s, box-shadow 0.08s, background-color 0.08s;
+}
+
+.tecla:hover {
+  background: var(--tinta-suave);
+}
+
+.tecla.esta-presionada,
+.tecla:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--hueso);
+  background: var(--sangre);
+}
+
+.tecla--accion {
+  width: 4.4rem;
+  height: 4.4rem;
+  border-color: var(--sangre);
+  background: var(--sangre);
+  box-shadow: 0 5px 0 var(--sangre-oscura);
+  font-size: 1.6rem;
+}
+
+.tecla--accion.esta-presionada,
+.tecla--accion:active {
+  box-shadow: 0 1px 0 var(--sangre-oscura);
+  background: var(--sangre-oscura);
+}
+
+.mando__etiqueta {
+  color: var(--niebla);
+  font-size: 0.9rem;
+}
+
+.objetivo {
+  display: grid;
+  gap: 0.4rem;
+  width: 100%;
+  padding-top: 1rem;
+  border-top: 1px solid var(--sangre);
+}
+
+.objetivo__titulo {
+  color: var(--sangre);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.objetivo__enlace {
+  color: var(--hueso);
+  text-underline-offset: 0.25em;
+}
+
+.objetivo__enlace:hover {
+  color: var(--sangre);
+}
+
+/* ---------- Tráiler y el demo en notas pegadas ---------- */
+
+.trailer {
+  display: grid;
+  align-content: center;
+  gap: clamp(1.75rem, 4vh, 3rem);
+  min-height: 100dvh;
+  max-width: var(--ancho-maximo);
+  margin-inline: auto;
+  padding: clamp(5rem, 10vh, 7rem) var(--margen) clamp(2rem, 5vh, 4rem);
+}
+
+.trailer__contenido {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.trailer__video video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--oscuridad);
+  box-shadow: 0 30px 70px rgb(0 0 0 / 0.5);
+}
+
+.notas__lista {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nota {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  padding: 1.75rem 1.1rem 1.4rem;
+  background: url("../assets/img/hoja.png") center / 100% 100% no-repeat;
+  color: var(--tinta);
+  image-rendering: pixelated;
+  filter: drop-shadow(0 18px 24px rgb(0 0 0 / 0.5));
+  rotate: var(--giro, 0deg);
+  transition: rotate 0.4s var(--salida-suave), translate 0.4s var(--salida-suave);
+}
+
+.nota:nth-child(1) { --giro: -3deg; }
+.nota:nth-child(2) { --giro: 2deg; }
+.nota:nth-child(3) { --giro: -1.5deg; }
+.nota:nth-child(4) { --giro: 3deg; }
+
+.nota:hover {
+  rotate: 0deg;
+  translate: 0 -6px;
+}
+
+.nota__numero {
+  font-family: var(--letra-titulo);
+  font-size: clamp(3rem, 2rem + 2.6vw, 4.75rem);
+  line-height: 0.85;
+}
+
+.nota:last-child .nota__numero {
+  color: var(--sangre-oscura);
+}
+
+.nota__texto {
+  color: var(--tinta-suave);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+/* ---------- Acto 5 · Cierre ---------- */
+
+.cierre {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 6rem var(--margen);
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+
+.cierre__espejo {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: -1;
+  width: min(60vmin, 560px);
+  aspect-ratio: 3 / 4;
+  border: 10px solid var(--tinta-suave);
+  border-radius: 50% / 40%;
+  overflow: hidden;
+  translate: -50% -50%;
+  box-shadow: 0 0 120px rgb(194 26 31 / 0.25);
+}
+
+.cierre__espejo video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.45;
+}
+
+.cierre__aviso {
+  position: absolute;
+  inset: auto var(--margen) 50%;
+  font-family: var(--letra-titulo);
+  font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem);
+  line-height: 1.05;
+  text-shadow: 0 4px 30px rgb(8 10 14 / 0.9);
+}
+
+.cierre__contenido {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1.75rem;
+  max-width: 900px;
+}
+
+/* Velo detrás del texto para que siga legible sobre el video del espejo */
+.cierre__contenido::before {
+  content: "";
+  position: absolute;
+  inset: -4rem -6rem;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, rgb(8 10 14 / 0.88) 35%, rgb(8 10 14 / 0) 72%);
+}
+
+.cierre__pregunta {
+  font-family: var(--letra-titulo);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 1.4rem + 4.5vw, 6rem);
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.cierre__invitacion {
+  font-size: var(--texto-grande);
+}
+
+/* Sin JavaScript, el aviso va arriba del contenido en lugar de encima */
+html:not(.js) .cierre__aviso {
+  position: static;
+  margin-bottom: 2.5rem;
+}
+
+/* ---------- Pie ---------- */
+
+.pie {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  max-width: var(--ancho-maximo);
+  margin-inline: auto;
+  padding: 5rem var(--margen) 4rem;
+  border-top: 1px solid rgb(138 155 168 / 0.15);
+  color: var(--niebla);
+  font-size: 0.9rem;
+}
+
+.pie__marca {
+  display: grid;
+  align-content: start;
+  gap: 0.2rem;
+}
+
+.pie__logo {
+  margin-bottom: 1rem;
+  font-family: var(--letra-titulo);
+  font-size: clamp(2.5rem, 2rem + 2vw, 3.75rem);
+  line-height: 0.9;
+  color: var(--hueso);
+  text-transform: uppercase;
+}
+
+.pie__titulo {
+  margin-bottom: 1.25rem;
+  color: var(--sangre);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pie__nombres {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pie__nombres li {
+  color: var(--hueso);
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.pie__nombres span {
+  display: block;
+  color: var(--niebla);
+  font-size: 0.85rem;
+}
+
+/* ---------- Pantallas chicas ---------- */
+
+@media (max-width: 1023px) {
+  .barra__enlaces {
+    display: none;
+  }
+
+  .expediente {
+    grid-template-columns: 1fr;
+  }
+
+  .expediente__pestanas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .sonido__texto {
+    display: none;
+  }
+
+  .barra__marca {
+    font-size: 1.3rem;
+  }
+
+  .recorrido__paradas {
+    grid-template-columns: 1fr;
+  }
+
+  .recorrido__piso {
+    display: none;
+  }
+
+  .ficha {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .ficha__escena {
+    height: 300px;
+  }
+
+  .ficha__sprite {
+    height: 260px;
+  }
+
+  .ficha__sprite--elaki {
+    height: 340px;
+  }
+
+  .oscuridad {
+    grid-template-columns: 1fr;
+  }
+
+  /* El recorrido horizontal se vuelve una columna normal */
+  .gameplay__pista {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .nivel {
+    flex-basis: auto;
+    grid-template-columns: 1fr;
+    grid-template-areas: "encabezado" "video" "texto";
+    min-height: auto;
+    padding: 5rem var(--margen);
+  }
+
+  .nivel__titulo {
+    white-space: normal;
+  }
+
+  .pruebalo__juego {
+    grid-template-columns: 1fr;
+  }
+
+  .mando {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: end;
+  }
+
+  .objetivo {
+    grid-column: 1 / -1;
+  }
+
+  .nivel--prologo { background: var(--casa-real); }
+  .nivel--uno { background: var(--casa-liminal); }
+  .nivel--dos { background: var(--casa-abandonada); }
+  .nivel--tres { background: var(--casa-carne); }
+
+  .notas__lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pie {
+    grid-template-columns: 1fr;
+  }
+
+  .pie__nombres {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .trailer__contenido,
+  .acecha__encabezado {
+    grid-template-columns: 1fr;
+  }
+
+  .acecha__luz {
+    justify-self: start;
+  }
+}
+
+/* ---------- Movimiento reducido ---------- */
+
+/* ?movimiento=1 en la URL añade .movimiento-forzado y anula esta preferencia (para el stand) */
+@media (prefers-reduced-motion: reduce) {
+  :root:not(.movimiento-forzado) .sprite img,
+  :root:not(.movimiento-forzado) .sonido[aria-pressed="true"] .sonido__barras i {
+    animation: none;
+  }
+
+  :root:not(.movimiento-forzado) .imagina__lineas {
+    grid-template-areas: none;
+  }
+
+  :root:not(.movimiento-forzado) .linea {
+    grid-area: auto;
+    opacity: 1;
+  }
+
+  :root:not(.movimiento-forzado) .cierre__aviso {
+    position: static;
+    margin-bottom: 2.5rem;
+  }
+}

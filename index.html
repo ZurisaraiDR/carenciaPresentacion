@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Carencia · Terror psicológico en pixel art</title>
+  <meta name="description" content="Carencia es un videojuego 2D de terror psicológico point and click. Elaki busca a su hermana Margarita, aunque su familia insiste en que nunca existió. Demo gratuita para Windows y macOS.">
+  <meta name="theme-color" content="#080A0E">
+  <meta property="og:title" content="Carencia">
+  <meta property="og:description" content="Nadie recuerda que tuviste una… Terror psicológico en pixel art. Demo gratuita.">
+  <meta property="og:image" content="assets/video/teaser.jpg">
+  <link rel="preload" href="assets/fonts/Barrio-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/SpecialElite-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    document.documentElement.classList.add("js");
+    if (new URLSearchParams(location.search).has("movimiento")) document.documentElement.classList.add("movimiento-forzado");
+  </script>
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <header class="barra">
+    <a class="barra__marca" href="#inicio" aria-label="Carencia, ir al inicio" translate="no">Carencia</a>
+    <nav class="barra__enlaces" aria-label="Secciones">
+      <a href="#imagina">Historia</a>
+      <a href="#familia">Personajes</a>
+      <a href="#gameplay">Gameplay</a>
+      <a href="#pruebalo">Pruébalo</a>
+    </nav>
+    <div class="barra__acciones">
+      <button class="sonido" id="boton-sonido" type="button" aria-pressed="false" aria-label="Sonido">
+        <span class="sonido__barras" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="sonido__texto">Sonido</span>
+      </button>
+      <a class="boton boton--linea" href="https://ideny-lr.itch.io/carencia" target="_blank" rel="noopener">Jugar demo</a>
+    </div>
+  </header>
+
+  <main id="contenido">
+
+    <!-- ACTO 1 · Tráiler de impacto -->
+    <section class="portada" id="inicio" aria-labelledby="titulo-carencia">
+      <div class="portada__video" aria-hidden="true">
+        <video src="assets/video/portada.mp4" poster="assets/video/portada.jpg" muted loop playsinline preload="auto" data-autoplay></video>
+      </div>
+      <div class="portada__contenido">
+        <h1 class="titulo-glitch" id="titulo-carencia" translate="no">
+          <span class="titulo-glitch__capa titulo-glitch__capa--roja" aria-hidden="true">Carencia</span>
+          <span class="titulo-glitch__capa titulo-glitch__capa--azul" aria-hidden="true">Carencia</span>
+          <span class="titulo-glitch__texto">Car<span class="titulo-glitch__falla">e</span>ncia</span>
+        </h1>
+        <p class="portada__lema">Nadie recuerda que tuviste una…</p>
+        <ul class="menu-juego" role="list">
+          <li><button class="menu-juego__opcion" type="button" data-abrir-trailer>Ver tráiler</button></li>
+          <li><a class="menu-juego__opcion" href="https://ideny-lr.itch.io/carencia" target="_blank" rel="noopener">Jugar demo</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <dialog class="cine" id="cine" aria-label="Tráiler de Carencia">
+      <div class="cine__marco">
+        <video id="video-trailer" src="assets/video/teaser.mp4" poster="assets/video/teaser.jpg" controls playsinline preload="none"></video>
+        <div class="cine__pie">
+          <p>Teaser con cinemáticas del juego. Contiene temas de desaparición, duelo y horror corporal.</p>
+          <button class="boton boton--linea" type="button" data-cerrar-trailer>Cerrar</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- ACTO 2 · Concepto y premisa -->
+    <section class="imagina" id="imagina" aria-label="Imagina">
+      <canvas class="imagina__lienzo" id="lienzo-despertar" aria-hidden="true"></canvas>
+      <div class="imagina__velo" aria-hidden="true"></div>
+      <div class="imagina__destello" aria-hidden="true"></div>
+      <div class="imagina__lineas">
+        <p class="linea">Imagina que un día despiertas y bajas a desayunar.</p>
+        <p class="linea">En la mesa hay tres platos. Solo tres.</p>
+        <p class="linea">Preguntas: «¿Dónde está <span class="nombre-corrupto">Margarita</span>?»</p>
+        <p class="linea linea--grande">«Hijo… tú nunca tuviste una hermana.»</p>
+        <p class="linea linea--sangre">Pero tú la recuerdas.</p>
+      </div>
+    </section>
+
+    <section class="concepto" id="concepto" aria-labelledby="titulo-concepto">
+      <h2 class="titulo-seccion" id="titulo-concepto" data-revelar>Bienvenidos a Carencia</h2>
+      <p class="parrafo">Un videojuego 2D en pixel art de terror psicológico. Aquí no hay armas ni combate: el miedo viene de lo que descubres.</p>
+      <div class="recorrido" id="recorrido">
+        <ol class="recorrido__paradas" role="list">
+          <li class="parada"><h3 class="parada__verbo">Explora</h3><p>Cada objeto de tu casa puede contradecir lo que te dicen.</p></li>
+          <li class="parada"><h3 class="parada__verbo">Cruza</h3><p>El espejo del baño se abre. Del otro lado, tu casa se deforma.</p></li>
+          <li class="parada"><h3 class="parada__verbo">Escapa</h3><p>No puedes pelear. Solo puedes seguir adelante.</p></li>
+        </ol>
+        <div class="recorrido__piso" aria-hidden="true">
+          <div class="sprite sprite--caminante" id="elaki-caminante" style="--frames: 12; --duracion: 1s; --proporcion: 155 / 218">
+            <img src="assets/sprites/elaki-caminar.png" alt="" width="3780" height="315">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Muro de carteles: se llena con el scroll mientras la cifra sube -->
+    <section class="muro" id="por-que" aria-labelledby="titulo-muro">
+      <div class="muro__carteles" aria-hidden="true"></div>
+      <div class="muro__centro">
+        <p class="cifra"><span class="cifra__numero" data-contar="130000">130,000</span></p>
+        <h2 class="muro__titulo" id="titulo-muro">personas siguen desaparecidas en México.</h2>
+        <p class="muro__remate">Carencia nace de esa herida.</p>
+      </div>
+      <p class="fuente">Fuente: <a href="https://versionpublicarnpdno.segob.gob.mx/Dashboard/Index" target="_blank" rel="noopener">RNPDNO</a>, 2026.</p>
+    </section>
+
+    <!-- ACTO 3 · Personajes y conflicto emocional -->
+    <section class="familia" id="familia" aria-labelledby="titulo-familia">
+      <div class="familia__encabezado">
+        <h2 class="titulo-seccion" id="titulo-familia" data-revelar>Una casa que olvida</h2>
+        <p class="parrafo">Toda la familia insiste en que Margarita nunca existió. Solo Elaki la recuerda.</p>
+      </div>
+
+      <div class="expediente" id="expediente">
+        <div class="expediente__pestanas" role="tablist" aria-label="Personajes">
+          <button class="pestana" type="button" role="tab" id="pestana-elaki" aria-controls="ficha-elaki" aria-selected="true">Elaki</button>
+          <button class="pestana" type="button" role="tab" id="pestana-margarita" aria-controls="ficha-margarita" aria-selected="false" tabindex="-1">Margarita</button>
+          <button class="pestana" type="button" role="tab" id="pestana-madre" aria-controls="ficha-madre" aria-selected="false" tabindex="-1">Madre</button>
+          <button class="pestana" type="button" role="tab" id="pestana-padre" aria-controls="ficha-padre" aria-selected="false" tabindex="-1">Padre</button>
+        </div>
+
+        <article class="ficha" role="tabpanel" id="ficha-elaki" aria-labelledby="pestana-elaki">
+          <div class="ficha__escena">
+            <div class="sprite ficha__sprite ficha__sprite--elaki" style="--frames: 4; --duracion: 1.4s; --proporcion: 155 / 218">
+              <img src="assets/sprites/elaki/espera-s.png" alt="Elaki, sprite en pixel art de un joven de playera blanca con mangas negras" width="620" height="218">
+            </div>
+          </div>
+          <div class="ficha__texto">
+            <p class="ficha__dato">17 años · Protagonista</p>
+            <h3 class="ficha__nombre">Elaki Flores Hernández</h3>
+            <p>No tiene poderes ni armas: solo su memoria y su obstinación. Es el único que sigue buscando.</p>
+            <blockquote class="ficha__cita">«Ahí está ella. Yo no estaba loco.»</blockquote>
+          </div>
+        </article>
+
+        <article class="ficha ficha--margarita" role="tabpanel" id="ficha-margarita" aria-labelledby="pestana-margarita" hidden>
+          <div class="ficha__escena">
+            <img class="ficha__cartel" src="assets/img/cartel-margarita.png" alt="Cartel de desaparecida: Margarita, 16 años" width="140" height="176" loading="lazy">
+          </div>
+          <div class="ficha__texto">
+            <p class="ficha__dato">16 años · Desaparecida desde el 31 de octubre</p>
+            <h3 class="ficha__nombre">Margarita Flores Hernández</h3>
+            <p>Su hermana. La persona que lo mantenía en pie. Su voz lo llama desde el otro lado del espejo.</p>
+            <blockquote class="ficha__cita">«Ayuda…»</blockquote>
+          </div>
+        </article>
+
+        <article class="ficha" role="tabpanel" id="ficha-madre" aria-labelledby="pestana-madre" hidden>
+          <div class="ficha__escena">
+            <div class="sprite ficha__sprite" style="--frames: 4; --duracion: 2.6s; --proporcion: 72 / 196">
+              <img src="assets/sprites/madre-parpadear.png" alt="La madre de Elaki, de vestido azul, parpadeando" width="288" height="196" loading="lazy">
+            </div>
+          </div>
+          <div class="ficha__texto">
+            <p class="ficha__dato">Madre</p>
+            <h3 class="ficha__nombre">La que niega</h3>
+            <p>Triste y agotada. Intenta estar presente, pero no lo logra del todo.</p>
+            <blockquote class="ficha__cita">«Hijo… tú nunca tuviste hermana.»</blockquote>
+          </div>
+        </article>
+
+        <article class="ficha" role="tabpanel" id="ficha-padre" aria-labelledby="pestana-padre" hidden>
+          <div class="ficha__escena">
+            <div class="sprite ficha__sprite" style="--frames: 5; --duracion: 1.8s; --proporcion: 112 / 222">
+              <img src="assets/sprites/padre-periodico.png" alt="El padre de Elaki leyendo el periódico" width="560" height="222" loading="lazy">
+            </div>
+          </div>
+          <div class="ficha__texto">
+            <p class="ficha__dato">Padre</p>
+            <h3 class="ficha__nombre">El que no mira</h3>
+            <p>Indiferente. Se refugia detrás del periódico y cierra cualquier conversación.</p>
+            <blockquote class="ficha__cita">«Termina tu desayuno y vuelve a la cama.»</blockquote>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="acecha" id="acecha" aria-labelledby="titulo-acecha">
+      <div class="acecha__encabezado">
+        <div class="acecha__titulos">
+          <h2 class="titulo-seccion" id="titulo-acecha" data-revelar>Lo que acecha</h2>
+          <p class="parrafo">No puedes pelear contra ellas. Mueve la luz para encontrarlas.</p>
+        </div>
+        <button class="acecha__luz" type="button" id="boton-luz" aria-pressed="false">Encender la luz</button>
+      </div>
+      <div class="oscuridad" id="oscuridad">
+        <figure class="entidad">
+          <div class="sprite entidad__sprite" style="--frames: 20; --duracion: 2s; --proporcion: 183 / 229">
+            <img src="assets/sprites/criatura-ataque.png" alt="La criatura canina: el perro de la familia convertido en una figura humanoide y huesuda" width="3660" height="229" loading="lazy">
+          </div>
+          <figcaption><strong>Criatura canina</strong>Del perro todavía puedes huir.</figcaption>
+        </figure>
+        <figure class="entidad">
+          <div class="sprite entidad__sprite" style="--frames: 12; --duracion: 1.4s; --proporcion: 184 / 237">
+            <img src="assets/sprites/manifestacion-ataque.png" alt="La Manifestación de Margarita: una figura oscura de pelo largo con el cuerpo deformado" width="2208" height="237" loading="lazy">
+          </div>
+          <figcaption><strong>Manifestación de Margarita</strong>De ella, no.</figcaption>
+        </figure>
+        <div class="oscuridad__velo" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- ACTO 4 · Gameplay -->
+    <section class="gameplay" id="gameplay" aria-labelledby="titulo-gameplay">
+      <div class="gameplay__pista" id="gameplay-pista">
+
+        <article class="nivel nivel--intro">
+          <h2 class="titulo-seccion" id="titulo-gameplay">Cada nivel, un miedo</h2>
+          <p class="parrafo">Cada vez que Elaki cruza el espejo, su casa se deforma un poco más.</p>
+        </article>
+
+        <!-- Gameplay de cada nivel. Un <video> sin src muestra su poster en duotono con el aviso "Gameplay muy pronto" -->
+        <article class="nivel nivel--prologo" aria-labelledby="nivel-prologo">
+          <header class="nivel__encabezado">
+            <p class="nivel__numero">Prólogo</p>
+            <h3 class="nivel__titulo" id="nivel-prologo">La negación</h3>
+          </header>
+          <div class="gameplay-video">
+            <video src="assets/video/gameplay-prologo.mp4" controls playsinline muted preload="none" poster="assets/video/gameplay-prologo.jpg" aria-label="Gameplay del prólogo"></video>
+          </div>
+          <div class="nivel__texto">
+            <p class="nivel__significado">Su familia dice que Margarita nunca existió. La casa dice otra cosa.</p>
+            <p class="nivel__sentir"><span>Sentirás</span> duda</p>
+          </div>
+        </article>
+        <article class="nivel nivel--uno" aria-labelledby="nivel-uno">
+          <header class="nivel__encabezado">
+            <p class="nivel__numero">Nivel 1</p>
+            <h3 class="nivel__titulo" id="nivel-uno">La primera ruptura</h3>
+          </header>
+          <div class="gameplay-video">
+            <video src="assets/video/gameplay-nivel-1.mp4" controls playsinline muted preload="none" poster="assets/video/gameplay-nivel-1.jpg" aria-label="Gameplay del nivel 1"></video>
+          </div>
+          <div class="nivel__texto">
+            <p class="nivel__miedo"><span>Representa</span> Valle inquietante</p>
+            <p class="nivel__significado">Lo familiar que se siente mal. El hogar sigue ahí, pero ya no obedece su forma.</p>
+            <p class="nivel__sentir"><span>Sentirás</span> desorientación</p>
+          </div>
+        </article>
+        <article class="nivel nivel--dos" aria-labelledby="nivel-dos">
+          <header class="nivel__encabezado">
+            <p class="nivel__numero">Nivel 2</p>
+            <h3 class="nivel__titulo" id="nivel-dos">La deformación</h3>
+          </header>
+          <div class="gameplay-video">
+            <video src="assets/video/gameplay-nivel-2.mp4" controls playsinline muted preload="none" poster="assets/video/gameplay-nivel-2.jpg" aria-label="Gameplay del nivel 2"></video>
+          </div>
+          <div class="nivel__texto">
+            <p class="nivel__miedo"><span>Representa</span> El miedo a perder</p>
+            <p class="nivel__significado">Lo que amas se convierte en lo que te persigue.</p>
+            <p class="nivel__sentir"><span>Sentirás</span> urgencia</p>
+          </div>
+        </article>
+        <article class="nivel nivel--tres" aria-labelledby="nivel-tres">
+          <header class="nivel__encabezado">
+            <p class="nivel__numero">Nivel 3</p>
+            <h3 class="nivel__titulo" id="nivel-tres">La realidad se rompe</h3>
+          </header>
+          <div class="gameplay-video">
+            <video src="assets/video/gameplay-nivel-3.mp4" controls playsinline muted preload="none" poster="assets/video/gameplay-nivel-3.jpg" aria-label="Gameplay del nivel 3"></video>
+          </div>
+          <div class="nivel__texto">
+            <p class="nivel__miedo"><span>Representa</span> La mente se rompe</p>
+            <p class="nivel__significado">Ver cosas donde no las hay y sentirse observado.</p>
+            <p class="nivel__sentir"><span>Sentirás</span> opresión</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="pruebalo" id="pruebalo" aria-labelledby="titulo-pruebalo">
+      <div class="pruebalo__encabezado">
+        <h2 class="titulo-seccion" id="titulo-pruebalo" data-revelar>Abre el espejo</h2>
+        <p class="parrafo">Estás en el baño de Elaki. Algo aquí no cuadra.</p>
+      </div>
+
+      <div class="pruebalo__juego">
+        <div class="escenario" id="escenario" tabindex="0" role="application" aria-roledescription="demo jugable" aria-label="Baño de Elaki. Usa W, A, S y D o las flechas para caminar y E para inspeccionar.">
+          <img class="escenario__fondo" src="assets/img/fondo-bano.png" alt="" width="1024" height="644" loading="lazy">
+          <div class="escenario__espejo" aria-hidden="true">
+            <video src="assets/video/portal-espejo.mp4" muted loop playsinline preload="none"></video>
+          </div>
+          <div class="escenario__indicador" aria-hidden="true">E</div>
+          <div class="jugador" id="jugador" aria-hidden="true">
+            <div class="sprite jugador__sprite" style="--frames: 4; --duracion: 1.4s; --proporcion: 155 / 218">
+              <img src="assets/sprites/elaki/espera-s.png" alt="" width="620" height="218" loading="lazy">
+            </div>
+          </div>
+          <div class="dialogo" id="dialogo" aria-live="polite" hidden>
+            <p class="dialogo__nombre">Elaki · pensamiento</p>
+            <p class="dialogo__texto"></p>
+          </div>
+          <p class="escenario__invitacion" aria-hidden="true">Haz clic para jugar</p>
+        </div>
+
+        <aside class="mando" aria-label="Controles">
+          <div class="mando__grupo">
+            <div class="mando__cruz" role="group" aria-label="Caminar">
+              <button class="tecla" type="button" data-tecla="w" aria-label="Arriba">W</button>
+              <button class="tecla" type="button" data-tecla="a" aria-label="Izquierda">A</button>
+              <button class="tecla" type="button" data-tecla="s" aria-label="Abajo">S</button>
+              <button class="tecla" type="button" data-tecla="d" aria-label="Derecha">D</button>
+            </div>
+            <p class="mando__etiqueta">Caminar</p>
+          </div>
+          <div class="mando__grupo">
+            <button class="tecla tecla--accion" type="button" data-tecla="e" aria-label="Inspeccionar">E</button>
+            <p class="mando__etiqueta">Inspeccionar</p>
+          </div>
+          <div class="objetivo">
+            <p class="objetivo__titulo">Objetivo</p>
+            <p class="objetivo__texto" id="objetivo" aria-live="polite">Revisa el espejo del lavabo.</p>
+            <a class="objetivo__enlace" href="https://ideny-lr.itch.io/carencia" target="_blank" rel="noopener" hidden>Sigue del otro lado: juega el demo</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Tráiler y el demo en cuatro notas pegadas, como las hojas del menú -->
+    <section class="trailer" id="trailer" aria-labelledby="titulo-trailer">
+      <h2 class="titulo-seccion" id="titulo-trailer" data-revelar>Míralo antes de jugarlo</h2>
+      <div class="trailer__contenido">
+        <figure class="trailer__video">
+          <video id="video-trailer-seccion" src="assets/video/teaser.mp4" poster="assets/video/teaser.jpg" controls playsinline preload="none" aria-label="Tráiler de Carencia"></video>
+        </figure>
+        <ul class="notas__lista" role="list" aria-label="El demo en números">
+          <li class="nota"><span class="nota__numero">20</span><span class="nota__texto">minutos de demo, en una sola sesión</span></li>
+          <li class="nota"><span class="nota__numero">3</span><span class="nota__texto">niveles, más prólogo y desenlace</span></li>
+          <li class="nota"><span class="nota__numero">1</span><span class="nota__texto">final que cambia todo lo que jugaste</span></li>
+          <li class="nota"><span class="nota__numero">$0</span><span class="nota__texto">gratis en itch.io, Windows y macOS</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ACTO 5 · Cierre con intriga e invitación -->
+    <section class="cierre" id="cierre" aria-labelledby="titulo-cierre">
+      <div class="cierre__espejo" aria-hidden="true">
+        <video src="assets/video/portal-espejo.mp4" poster="assets/video/portal-espejo.jpg" muted loop playsinline preload="none" data-autoplay></video>
+      </div>
+      <p class="cierre__aviso">No te vamos a contar el final.</p>
+      <div class="cierre__contenido">
+        <h2 class="cierre__pregunta" id="titulo-cierre">¿Encontrarás a Margarita… o encontrarás la verdad?</h2>
+        <p class="cierre__invitacion">El espejo te está esperando.</p>
+        <a class="boton boton--sangre boton--grande" href="https://ideny-lr.itch.io/carencia" target="_blank" rel="noopener">Jugar demo</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="pie__marca">
+      <p class="pie__logo" translate="no">Carencia</p>
+      <p>Integradora III · IDYGS101</p>
+      <p>Ingeniería en Desarrollo y Gestión de Software</p>
+      <p>Universidad Tecnológica de Cancún</p>
+    </div>
+    <div class="pie__equipo">
+      <p class="pie__titulo">Equipo</p>
+      <ul class="pie__nombres" role="list">
+        <li>Arellano Díaz <span>Yareny Alexandra</span></li>
+        <li>Balam Salaya <span>Armando</span></li>
+        <li>Delgado Rodríguez <span>Zurisarai</span></li>
+        <li>López Rodríguez <span>Ideny</span></li>
+        <li>Ojeda Cauich <span>Melchor Emmanuel</span></li>
+        <li>Palma Gongora <span>Wendy Kristal</span></li>
+      </ul>
+    </div>
+  </footer>
+
+  <audio id="musica" src="assets/audio/musica-menu.mp3" loop preload="none"></audio>
+  <audio id="sfx-glitch" src="assets/audio/glitch-nombre.mp3" preload="none"></audio>
+  <audio id="sfx-escritura" src="assets/audio/escritura.mp3" preload="none"></audio>
+  <audio id="sfx-chillido" src="assets/audio/chillido.mp3" preload="none"></audio>
+  <audio id="sfx-portal" src="assets/audio/portal.mp3" preload="none"></audio>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script src="assets/vendor/SplitText.min.js"></script>
+  <script src="assets/vendor/ScrambleTextPlugin.min.js"></script>
+  <script src="js/sonido.js"></script>
+  <script src="js/expediente.js"></script>
+  <script src="js/demo-jugable.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
